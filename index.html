@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Grue Console Demo</title>
+  <style>
+    div#demo-container {
+      padding: 5px;
+      border: 4px solid lightgrey;
+    }
+    canvas#grue-canvas {
+      border: 4px solid red;
+    }
+  </style>
+  <script src='grue-console.js'></script>
+  <script type="text/javascript">
+    var currentLine = 0;
+    var demoLines = [
+      'A white mailbox',
+      'some more text.',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+    ];
+    
+    document.addEventListener('DOMContentLoaded', function () {
+      window.grueConsole = new GrueConsole(document.getElementById("grue-canvas"), {
+        width: 400,
+        height: 300,
+        scrollSpeed: 20,
+        typeSpeed: 20,
+        font: '20px "Lucida Console", monospace',
+        fontColor: 'green',
+        backgroundColor: 'black'
+      });
+
+      var demoFunc = function() {
+        setTimeout(function() {
+          var text = demoLines[currentLine];
+          currentLine = currentLine < demoLines.length - 1 ? currentLine + 1 : 0;
+          window.grueConsole.appendLine(text, function() {
+            demoFunc();
+
+          });
+        }, 2000)
+      }
+
+      demoFunc();
+    });
+  </script>
+</head>
+<body>
+<div id="demo-container">
+  <canvas id="grue-canvas">
+  </canvas>
+</div>
+</body>
+</html>
