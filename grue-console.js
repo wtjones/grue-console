@@ -1,7 +1,7 @@
 function GrueConsole(element, options) {
   "use strict";
 
-  var self = this;
+  //var self = this;
   if (!element) return;
 
   element.width = options.width;
@@ -16,25 +16,42 @@ function GrueConsole(element, options) {
   var currentChar;
   var isScrolling = false;
   var grueContent = '';
+  var appendQueue = [];
 
   fillBackground();
 
   function appendLine(content, cb) {
+    appendQueue[appendQueue.length] = content;
+    // need any array of callbacks?
+    if (!isScrolling) {
+      updateConsole(cb);
+    }
+  }
 
-    var startScrollOffset = getFontSize();
-    scrollOffset = startScrollOffset;
+  function updateConsole(cb) {
+    if (appendQueue.length === 0) {
+      console.log('q empty');
+      isScrolling = false;
+      if (cb) cb();
+      return;
+    }
+    var content = appendQueue[0];
+    appendQueue = appendQueue.slice(1);
+
+    scrollOffset = getFontSize();
     isScrolling = true;
     currentChar = 0;
     if (grueContent.length === 0) {
-      grueContent += grueContent ===  '' ? content : '\n' + content;
-      typeInterval(function() {
-        cb();
+      grueContent += grueContent === '' ? content : '\n' + content;
+      typeInterval(function () {
+          updateConsole(cb);
       });
     } else {
-      scrollInterval(function() {
-        grueContent += grueContent ===  '' ? content : '\n' + content;
+
+      scrollInterval(function () {
+        grueContent += grueContent === '' ? content : '\n' + content;
         typeInterval(function () {
-          cb();
+          updateConsole(cb);
         })
       })
     }

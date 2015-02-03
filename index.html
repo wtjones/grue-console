@@ -19,17 +19,19 @@
       'some more text.',
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
     ];
-    
+
+    var options = {
+      width: 400,
+      height: 200,
+      scrollSpeed: 20,
+      typeSpeed: 20,
+      font: '15px "Lucida Console", monospace',
+      fontColor: 'green',
+      backgroundColor: 'black'
+    };
+
     document.addEventListener('DOMContentLoaded', function () {
-      window.grueConsole = new GrueConsole(document.getElementById("grue-canvas"), {
-        width: 400,
-        height: 300,
-        scrollSpeed: 20,
-        typeSpeed: 20,
-        font: '20px "Lucida Console", monospace',
-        fontColor: 'green',
-        backgroundColor: 'black'
-      });
+      window.grueConsole = new GrueConsole(document.getElementById("grue-canvas"), options );
 
       var demoFunc = function() {
         setTimeout(function() {
@@ -39,16 +41,28 @@
             demoFunc();
 
           });
-        }, 2000)
-      }
+        }, 1000)
+      };
 
       demoFunc();
+
+
+      window.grueConsole2 = new GrueConsole(document.getElementById("grue-canvas2"), options );
+      setTimeout(function() {
+        window.grueConsole2.appendLine('blah blah blah');
+        window.grueConsole2.appendLine('blah blah blah2');
+        window.grueConsole2.appendLine('blah blah blah3');
+      }, 1500);
     });
+
+
   </script>
 </head>
 <body>
 <div id="demo-container">
   <canvas id="grue-canvas">
+  </canvas>
+  <canvas id="grue-canvas2">
   </canvas>
 </div>
 </body>
