@@ -15,8 +15,9 @@ function GrueConsole(element, options) {
   var scrollOffset = 0;
   var currentChar;
   var isScrolling = false;
-  var grueContent = '';
+  //var grueContent = '';
   var appendQueue = [];
+  var lines = [];
 
   fillBackground();
 
@@ -36,20 +37,26 @@ function GrueConsole(element, options) {
       return;
     }
     var content = appendQueue[0];
-    appendQueue = appendQueue.slice(1);
+    //lines[lines.length] = appendQueue[0];
+    //appendQueue = appendQueue.slice(1);
 
     scrollOffset = getFontSize();
     isScrolling = true;
     currentChar = 0;
-    if (grueContent.length === 0) {
-      grueContent += grueContent === '' ? content : '\n' + content;
+    if (lines.length === 0) {
+      lines[lines.length] = appendQueue[0];
+      appendQueue = appendQueue.slice(1);
+      //grueContent += grueContent === '' ? content : '\n' + content;
+
       typeInterval(function () {
           updateConsole(cb);
       });
     } else {
 
       scrollInterval(function () {
-        grueContent += grueContent === '' ? content : '\n' + content;
+        lines[lines.length] = appendQueue[0];
+        appendQueue = appendQueue.slice(1);
+        //grueContent += grueContent === '' ? content : '\n' + content;
         typeInterval(function () {
           updateConsole(cb);
         })
@@ -59,6 +66,7 @@ function GrueConsole(element, options) {
 
   function typeInterval(cb) {
 
+    var grueContent = getContent();
     var splitContent = grueContent.split('\n');
     scrollOffset = getFontSize();
     context.fillStyle = 'blue';
@@ -99,12 +107,35 @@ function GrueConsole(element, options) {
     context.fillStyle = 'green';
     var drawY = options.height - padding;
     var drawX = padding;
-    var splitContent = grueContent.split('\n');
+    var content = getContent();
+    var splitContent = content.split('\n');
     for (var i = splitContent.length - 1; i >= 0; i--) {
       var line = splitContent[i];
       context.fillText(line, drawX, drawY - scrollOffset + getFontSize());
       drawY -= getFontSize();
     }
+  }
+
+  function getContent() {
+    var content = '';
+
+    //for (var i = lines.length - 1; i >= 0; i--) {
+    //  content += content === '' ? lines[i] : '\n' + lines[i];
+    //}
+
+    for (var i = 0; i < lines.length; i++) {
+      content += content === '' ? lines[i] : '\n' + lines[i];
+    }
+    //var splitContent = grueContent.split('\n');
+    //var lastLine = splitContent[splitContent.length - 1];
+    //var line = lastLine.substring(0, currentChar + 0);
+
+    return content;
+  }
+
+  function clear() {
+    lines = [];
+    appendQueue = [];
   }
 
   function fillBackground() {
@@ -117,6 +148,7 @@ function GrueConsole(element, options) {
   }
 
   return {
-    appendLine: appendLine
+    appendLine: appendLine,
+    clear: clear
   }
 }
