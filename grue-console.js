@@ -15,9 +15,10 @@ function GrueConsole(element, options) {
   var scrollOffset = 0;
   var currentChar;
   var isScrolling = false;
-  //var grueContent = '';
   var appendQueue = [];
+  var secondaryQueue = [];
   var lines = [];
+
 
   fillBackground();
 
@@ -30,23 +31,26 @@ function GrueConsole(element, options) {
   }
 
   function updateConsole(cb) {
-    if (appendQueue.length === 0) {
-      console.log('q empty');
+    if (appendQueue.length === 0 && secondaryQueue.length === 0) {
       isScrolling = false;
       if (cb) cb();
       return;
     }
-    var content = appendQueue[0];
-    //lines[lines.length] = appendQueue[0];
-    //appendQueue = appendQueue.slice(1);
+
+    if (secondaryQueue.length === 0) {
+      var addLines = lineToWrappedLines(appendQueue[0]);
+      appendQueue = appendQueue.slice(1);
+      for (var i = 0; i < addLines.length; i++) {
+        secondaryQueue[secondaryQueue.length] = addLines[i];
+      }
+    }
 
     scrollOffset = getFontSize();
     isScrolling = true;
     currentChar = 0;
     if (lines.length === 0) {
-      lines[lines.length] = appendQueue[0];
-      appendQueue = appendQueue.slice(1);
-      //grueContent += grueContent === '' ? content : '\n' + content;
+      lines[lines.length] = secondaryQueue[0];
+      secondaryQueue = secondaryQueue.slice(1);
 
       typeInterval(function () {
           updateConsole(cb);
@@ -54,9 +58,8 @@ function GrueConsole(element, options) {
     } else {
 
       scrollInterval(function () {
-        lines[lines.length] = appendQueue[0];
-        appendQueue = appendQueue.slice(1);
-        //grueContent += grueContent === '' ? content : '\n' + content;
+        lines[lines.length] = secondaryQueue[0];
+        secondaryQueue = secondaryQueue.slice(1);
         typeInterval(function () {
           updateConsole(cb);
         })
@@ -119,19 +122,61 @@ function GrueConsole(element, options) {
   function getContent() {
     var content = '';
 
-    //for (var i = lines.length - 1; i >= 0; i--) {
-    //  content += content === '' ? lines[i] : '\n' + lines[i];
-    //}
-
     for (var i = 0; i < lines.length; i++) {
-      content += content === '' ? lines[i] : '\n' + lines[i];
+      var addLine = '';
+      var lineWidth = context.measureText(lines[i]).width;
+      if (context.measureText(lines[i]).width < element.width) {
+        addLine = lines[i];
+        content += content === '' ? addLine : '\n' + addLine;
+      } else {
+        addLine = '';
+
+        var words = lines[i].split(' ');
+        while (words.length > 0) {
+          //if (addLine !== '') {addLine += '\n';}
+          while (context.measureText(addLine).width < element.width && words.length > 0) {
+            addLine += addLine === '' ? words[0] : ' ' + words[0];
+            words = words.slice(1);
+          }
+          content += content === '' ? addLine : '\n' + addLine;
+          addLine = '';
+        }
+
+      }
     }
-    //var splitContent = grueContent.split('\n');
-    //var lastLine = splitContent[splitContent.length - 1];
-    //var line = lastLine.substring(0, currentChar + 0);
 
     return content;
   }
+
+  function lineToWrappedLines(line) {
+
+    var result = [];
+    var inLines = [];
+
+    inLines = line.split('\n');
+    for (var i = 0; i < inLines.length; i++) {
+      var addLine = '';
+      var lineWidth = context.measureText(inLines[i]).width;
+      if (context.measureText(inLines[i]).width < element.width) {
+        result[result.length] = inLines[i];
+      } else {
+        addLine = '';
+
+        var words = inLines[i].split(' ');
+        while (words.length > 0) {
+          while (context.measureText(addLine).width < element.width && words.length > 0) {
+            addLine += addLine === '' ? words[0] : ' ' + words[0];
+            words = words.slice(1);
+          }
+          result[result.length] = addLine;
+          addLine = '';
+        }
+
+      }
+    }
+    return result;
+  }
+
 
   function clear() {
     lines = [];
