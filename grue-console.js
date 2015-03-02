@@ -4,6 +4,23 @@ function GrueConsole(element, options) {
   //var self = this;
   if (!element) return;
 
+  var defaultOptions = {
+    width: 200,
+    height: 200,
+    scrollSpeed: 20,
+    typeSpeed: 20,
+    fontColor: 'green',
+    font: '15px "Lucida Console", monospace',
+    backgroundColor: 'black'
+  }
+
+  //
+  for (var key in defaultOptions) {
+    if (!options.hasOwnProperty(key)) {
+      options[key] = defaultOptions[key];
+    }
+  }
+
   element.width = options.width;
   element.height = options.height;
 
