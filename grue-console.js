@@ -1,8 +1,10 @@
-function GrueConsole(element, options) {
+function GrueConsole(parentElement, options) {
   "use strict";
 
-  //var self = this;
-  if (!element) return;
+  if (!parentElement) return;
+  var element = document.createElement('canvas');
+
+  parentElement.appendChild(element);
 
   var defaultOptions = {
     width: 200,
@@ -14,7 +16,7 @@ function GrueConsole(element, options) {
     backgroundColor: 'black'
   }
 
-  //
+  // extend via default options
   for (var key in defaultOptions) {
     if (!options.hasOwnProperty(key)) {
       options[key] = defaultOptions[key];

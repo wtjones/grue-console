@@ -11,7 +11,7 @@
     };
 
     document.addEventListener('DOMContentLoaded', function () {
-      window.grueConsole = new GrueConsole(document.getElementById("grue-canvas"), options );
+      window.grueConsole = new GrueConsole(document.getElementById("demo-container"), options );
       setTimeout(function() {
         window.grueConsole.appendLine('Sed at metus nibh');
         window.grueConsole.appendLine('Fusce aliquam risus vitae dui tincidunt.');
@@ -23,8 +23,6 @@
 </head>
 <body>
 <div id="demo-container">
-  <canvas id="grue-canvas">
-  </canvas>
 </div>
 </body>
 </html>

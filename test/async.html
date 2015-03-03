@@ -18,7 +18,7 @@
     };
 
     document.addEventListener('DOMContentLoaded', function () {
-      window.grueConsole = new GrueConsole(document.getElementById("grue-canvas"), options );
+      window.grueConsole = new GrueConsole(document.getElementById("demo-container"), options );
 
       var demoFunc = function() {
         setTimeout(function() {
@@ -36,8 +36,6 @@
 </head>
 <body>
 <div id="demo-container">
-  <canvas id="grue-canvas">
-  </canvas>
 </div>
 </body>
 </html>
