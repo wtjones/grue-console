@@ -34,6 +34,7 @@ function GrueConsole(parentElement, options) {
   var scrollOffset = 0;
   var currentChar;
   var isScrolling = false;
+  var callbackQueue = [];
   var appendQueue = [];
   var secondaryQueue = [];
   var lines = [];
@@ -43,7 +44,7 @@ function GrueConsole(parentElement, options) {
 
   function appendLine(content, cb) {
     appendQueue[appendQueue.length] = content;
-    // need any array of callbacks?
+    if (cb) {callbackQueue[callbackQueue.length] = cb;}
     if (!isScrolling) {
       updateConsole(cb);
     }
@@ -52,15 +53,16 @@ function GrueConsole(parentElement, options) {
   function updateConsole(cb) {
     if (appendQueue.length === 0 && secondaryQueue.length === 0) {
       isScrolling = false;
-      if (cb) cb();
       return;
     }
 
     if (secondaryQueue.length === 0) {
-      var addLines = lineToWrappedLines(appendQueue[0]);
-      appendQueue = appendQueue.slice(1);
-      for (var i = 0; i < addLines.length; i++) {
-        secondaryQueue[secondaryQueue.length] = addLines[i];
+      if (appendQueue.length > 0) {
+        var addLines = lineToWrappedLines(appendQueue[0]);
+        appendQueue = appendQueue.slice(1);
+        for (var i = 0; i < addLines.length; i++) {
+          secondaryQueue[secondaryQueue.length] = addLines[i];
+        }
       }
     }
 
@@ -73,6 +75,7 @@ function GrueConsole(parentElement, options) {
 
       typeInterval(function () {
           updateConsole(cb);
+          dequeCallback();
       });
     } else {
 
@@ -81,6 +84,7 @@ function GrueConsole(parentElement, options) {
         secondaryQueue = secondaryQueue.slice(1);
         typeInterval(function () {
           updateConsole(cb);
+          dequeCallback();
         })
       })
     }
@@ -196,6 +200,13 @@ function GrueConsole(parentElement, options) {
     return result;
   }
 
+  function dequeCallback() {
+    if (callbackQueue.length > 0) {
+      var cbTemp = callbackQueue[0];
+      callbackQueue = callbackQueue.splice(1);
+      cbTemp();
+    }
+  }
 
   function clear() {
     lines = [];

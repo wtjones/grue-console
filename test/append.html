@@ -7,15 +7,23 @@
   <script type="text/javascript">
     var options = {
       width: 400,
-      height: 200
+      height: 200,
+      scrollSpeed: 40,
+      typeSpeed: 40,
     };
 
     document.addEventListener('DOMContentLoaded', function () {
       window.grueConsole = new GrueConsole(document.getElementById("demo-container"), options );
       setTimeout(function() {
-        window.grueConsole.appendLine('Sed at metus nibh');
-        window.grueConsole.appendLine('Fusce aliquam risus vitae dui tincidunt.');
-        window.grueConsole.appendLine('Lorem ipsum dolor sit amet, consectetur adipiscing elit.');
+        window.grueConsole.appendLine('Sed at metus nibh', function() {
+          console.log('callback 1');
+        });
+        window.grueConsole.appendLine('Fusce aliquam risus vitae dui tincidunt.', function() {
+          console.log('callback 2');
+        });
+        window.grueConsole.appendLine('Lorem ipsum dolor sit amet, consectetur adipiscing elit.', function() {
+          console.log('callback 3');
+        });
       }, 1500);
     });
 

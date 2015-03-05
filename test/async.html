@@ -17,6 +17,7 @@
       height: 200
     };
 
+    var counter = 0;
     document.addEventListener('DOMContentLoaded', function () {
       window.grueConsole = new GrueConsole(document.getElementById("demo-container"), options );
 
@@ -24,9 +25,10 @@
         setTimeout(function() {
           var text = demoLines[currentLine];
           currentLine = currentLine < demoLines.length - 1 ? currentLine + 1 : 0;
+          counter++;
           window.grueConsole.appendLine(text, function() {
+            console.log('callback ' + counter);
             demoFunc();
-
           });
         }, 1000)
       };
