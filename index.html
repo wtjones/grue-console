@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src='https://rawgit.com/wtjones/grue-console/master/grue-console.js'></script>
+  <script type="text/javascript">
+    var currentLine = 0;
+    var demoLines = [
+      'A white mailbox',
+      'some more text.',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+    ];
+    var options = {
+      width: 400,
+      height: 200
+    };
+    var counter = 0;
+    document.addEventListener('DOMContentLoaded', function () {
+      window.grueConsole = new GrueConsole(document.getElementById("demo-container"), options );
+      var demoFunc = function() {
+        setTimeout(function() {
+          var text = demoLines[currentLine];
+          currentLine = currentLine < demoLines.length - 1 ? currentLine + 1 : 0;
+          counter++;
+          window.grueConsole.appendLine(text, function() {
+            console.log('callback ' + counter);
+            demoFunc();
+          });
+        }, 1000)
+      };
+      demoFunc();
+    });
+  </script>
+</head>
+<body>
+<H1>Grue Console Demo</H1>
+<div id="demo-container" width="400" height="200">
+</div>
+</body>
+</html>
